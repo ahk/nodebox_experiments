@@ -1,3 +1,5 @@
+# Run this animation in nodebox goofus!
+
 size(1280, 720)
 speed(1)
  
@@ -17,13 +19,15 @@ class FOLCircle:
 # off a given circle
 def new_coords_for(circle):
     coords_list = []
-    angles = [-90, -30, 30, 90, 150, 210]
+    # do some magic here to gen an appropriate list of angles
+    num_circles = 6
+    angles = [(i*(360/num_circles)) for i in range(num_circles)]
     for angle in angles:
         coords_list.append(coords_relative_to(circle, angle))
     return coords_list
     
 # single x,y coordinate pair whose center occurs on the circumference 
-# of the given circle at the given angle
+# of the given circle at the given angle (in degrees)
 def coords_relative_to(circle, angle):
     """ (x_?,y_?) = (x + radius * cos(angle), radius * sin(angle)) """
     rads = radians(angle)
