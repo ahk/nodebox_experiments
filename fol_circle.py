@@ -77,7 +77,10 @@ def setup():
 def draw():
     global circles
     global outer_circles
-    if len(circles) > 10000:
+    
+    if len(circles) > 1000:
+        # hack to make animation stop by causing python to puke on an unknown token
+        # which I call stop, for obvious reasons
         stop
         
     background(0.12, 0.12, 0.06)
