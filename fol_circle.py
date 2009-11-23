@@ -1,7 +1,7 @@
 # Run this animation in nodebox goofus!
 
 size(1280, 720)
-speed(1)
+speed(60)
  
 from math import pi, sin, cos, radians
  
