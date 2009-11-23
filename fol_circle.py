@@ -76,34 +76,50 @@ def drop_redundant_circles(new_list, master_list):
 def setup():
     global circles
     global outer_circles
+    global outer_circle_draw_pct
+    
     c = FOLCircle(550, 270)
-    circles = [c]
+    circles = []
     outer_circles = [c]
+    outer_circle_draw_pct = 0
  
 def draw():
     global circles
     global outer_circles
+    global outer_circle_draw_pct
+    
+    background(0.12, 0.12, 0.06)
+    nofill()
+    stroke(1, 1, 1)
+    strokewidth(1)
     
     if len(circles) > 2000:
         # hack to make animation stop by causing python to puke on an unknown token
         # which I call stop, for obvious reasons
         stop
-        
-    background(0.12, 0.12, 0.06)
-    nofill()
-    stroke(1, 1, 1)
-    strokewidth(1)
 
+    # draw old circles
     for circle in circles:
         circle.draw()
-
-    potential_coords = []
+    
+    # draw new outer row
     for circle in outer_circles:
-        coords = new_coords_for(circle, 6)
-        potential_coords.extend(coords)
+        circle.draw_portion(outer_circle_draw_pct)
 
-    new_circles = generate_circles_from_coords(potential_coords)
-    # drop any that might overlap circles we've already made
-    new_circles = drop_redundant_circles(new_circles, circles)    
-    circles.extend(new_circles)
-    outer_circles = new_circles
+    if outer_circle_draw_pct >= 100:
+        # reset drawing progress
+        outer_circle_draw_pct = 0
+        
+        # add outer row to old
+        circles.extend(outer_circles)
+        potential_coords = []
+        for circle in outer_circles:
+            coords = new_coords_for(circle, 6)
+            potential_coords.extend(coords)
+
+        new_circles = generate_circles_from_coords(potential_coords)
+        # drop any that might overlap circles we've already made
+        new_circles = drop_redundant_circles(new_circles, circles)
+        outer_circles = new_circles
+    else:
+        outer_circle_draw_pct += 1
