@@ -13,14 +13,20 @@ class FOLCircle:
         self.radius = radius
         
     def draw(self):
-        oval(self.x, self.y, self.radius * 2, self.radius * 2)    
+        oval(self.x, self.y, self.radius * 2, self.radius * 2)
+        
+    def draw_portion(self, percent=100):
+        path = oval(self.x, self.y, self.radius * 2, self.radius * 2, draw=False)
+        points = list(path.points(amount=100))
+        subpath_points = points[0:percent + 1]
+        subpath = findpath(subpath_points, 1)
+        drawpath(subpath)
       
 # list of coordinates for the next generation of FOLCircles built
 # off a given circle
-def new_coords_for(circle):
+def new_coords_for(circle, num_circles):
     coords_list = []
-    # do some magic here to gen an appropriate list of angles
-    num_circles = 6
+    # do some math here to gen an appropriate list of angles
     angles = [(i*(360/num_circles)) for i in range(num_circles)]
     for angle in angles:
         coords_list.append(coords_relative_to(circle, angle))
@@ -78,7 +84,7 @@ def draw():
     global circles
     global outer_circles
     
-    if len(circles) > 1000:
+    if len(circles) > 2000:
         # hack to make animation stop by causing python to puke on an unknown token
         # which I call stop, for obvious reasons
         stop
@@ -86,14 +92,14 @@ def draw():
     background(0.12, 0.12, 0.06)
     nofill()
     stroke(1, 1, 1)
-    strokewidth(6)
+    strokewidth(1)
 
     for circle in circles:
         circle.draw()
 
     potential_coords = []
     for circle in outer_circles:
-        coords = new_coords_for(circle)
+        coords = new_coords_for(circle, 6)
         potential_coords.extend(coords)
 
     new_circles = generate_circles_from_coords(potential_coords)
