@@ -3,7 +3,7 @@
 size(1280, 720)
 speed(60)
  
-from math import pi, sin, cos, radians
+from math import pi, sin, cos, radians, sqrt
  
 # our circle class
 class FOLCircle:
@@ -11,16 +11,50 @@ class FOLCircle:
         self.x = x
         self.y = y
         self.radius = radius
+        path = oval(self.x, self.y, self.radius * 2, self.radius * 2, draw=False)
+        self.path = path
+        # point precision is 100 to make percent based logic easy
+        self.path_points = path.points(100)
         
     def draw(self):
-        oval(self.x, self.y, self.radius * 2, self.radius * 2)
+        drawpath(self.path)
+    
+    # draw a portion of the circle, starting with the point nearest given x,y coords
+    def draw_portion(self, x, y, percent=100):
+        print len(list(self.path_points))
+        # point precision is 100 here, makes working with percents easy
+        path_points = list(self.path.points(amount=100))
         
-    def draw_portion(self, percent=100):
-        path = oval(self.x, self.y, self.radius * 2, self.radius * 2, draw=False)
-        points = list(path.points(amount=100))
-        subpath_points = points[0:percent + 1]
-        subpath = findpath(subpath_points, 1)
-        drawpath(subpath)
+        # trickery to loop through the list from the beginning
+        # if we reach the end before we've gotten enough points
+        # smash both of these together at the end
+        start_point = point_nearest(x, y, path_points)
+        start_index = path_points.index(start_point)
+        # smaller of percent or remaining items
+        end_index = sorted([(start_index + percent), len(path_points)])[0]
+        
+        chunk = path_points[start_index:end_index]
+        remaining = percent - len(chunk)
+        if remaining > 0:
+            chunk2 = path_points[0:remaining]
+            chunk.extend(chunk2)
+        
+        if len(chunk) > 0:
+            subpath = findpath(chunk)
+            drawpath(subpath)
+        
+def point_nearest(x,y, points):
+    deltas2points = {}
+    for point in points:
+        dx = abs(x - point.x)
+        dy = abs(y - point.y)
+        delta = sqrt(dx**2 + dy**2)
+        deltas2points[point] = delta
+    # reverse index, make into list of lists, sort list by value (delta)
+    # grab last (lowest delta), get the second value (the original point object)
+    point = sorted([(value,key) for (key,value) in deltas2points.items()])[0][1]
+    return point
+
       
 # list of coordinates for the next generation of FOLCircles built
 # off a given circle
@@ -104,7 +138,7 @@ def draw():
     
     # draw new outer row
     for circle in outer_circles:
-        circle.draw_portion(outer_circle_draw_pct)
+        circle.draw_portion(640,360,outer_circle_draw_pct)
 
     if outer_circle_draw_pct >= 100:
         # reset drawing progress

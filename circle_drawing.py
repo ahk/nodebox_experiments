@@ -73,7 +73,7 @@ def draw():
     nofill()
     stroke(1, 1, 1)
     strokewidth(1)
-    circle.draw_portion(500,600,percent_to_draw)
+    circle.draw_portion(700,600,percent_to_draw)
     
     if percent_to_draw >= 100:
         percent_to_draw = 0
