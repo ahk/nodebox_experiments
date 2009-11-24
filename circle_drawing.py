@@ -9,15 +9,19 @@ class FOLCircle:
         self.x = x
         self.y = y
         self.radius = radius
+        path = oval(self.x, self.y, self.radius * 2, self.radius * 2, draw=False)
+        self.path = path
+        # point precision is 100 to make percent based logic easy
+        self.path_points = path.points(100)
         
     def draw(self):
-        oval(self.x, self.y, self.radius * 2, self.radius * 2)    
+        drawpath(self.path)
     
     # draw a portion of the circle, starting with the point nearest given x,y coords
     def draw_portion(self, x, y, percent=100):
-        path = oval(self.x, self.y, self.radius * 2, self.radius * 2, draw=False)
+        print len(list(self.path_points))
         # point precision is 100 here, makes working with percents easy
-        path_points = list(path.points(amount=100))
+        path_points = list(self.path.points(amount=100))
         
         # trickery to loop through the list from the beginning
         # if we reach the end before we've gotten enough points
@@ -69,7 +73,7 @@ def draw():
     nofill()
     stroke(1, 1, 1)
     strokewidth(1)
-    circle.draw_portion(0,0,percent_to_draw)
+    circle.draw_portion(500,600,percent_to_draw)
     
     if percent_to_draw >= 100:
         percent_to_draw = 0
