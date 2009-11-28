@@ -111,23 +111,28 @@ def setup():
     global circles
     global outer_circles
     global outer_circle_draw_pct
+    global frame
     
     c = FOLCircle(550, 270)
     circles = []
     outer_circles = [c]
     outer_circle_draw_pct = 0
+    frame = 0
  
 def draw():
     global circles
     global outer_circles
     global outer_circle_draw_pct
+    global frame
+    
+    frame += 1
     
     background(0.12, 0.12, 0.06)
     nofill()
     stroke(1, 1, 1)
-    strokewidth(1)
+    strokewidth(3)
     
-    if len(circles) > 2000:
+    if len(circles) > 2500:
         # hack to make animation stop by causing python to puke on an unknown token
         # which I call stop, for obvious reasons
         stop
@@ -138,6 +143,7 @@ def draw():
     
     # draw new outer row
     for circle in outer_circles:
+        stroke(1,1,1)
         circle.draw_portion(640,360,outer_circle_draw_pct)
 
     if outer_circle_draw_pct >= 100:
@@ -157,3 +163,6 @@ def draw():
         outer_circles = new_circles
     else:
         outer_circle_draw_pct += 1
+    
+    canvas.save("partial" + str(frame) + ".png")
+    canvas.clear()

@@ -1,0 +1,1 @@
+ffmpeg -f image2 -r 30 -s 1280x720 -sameq -i tmp/partial%d.png test.avi

@@ -85,9 +85,9 @@ def draw():
     background(0.12, 0.12, 0.06)
     nofill()
     stroke(1, 1, 1)
-    strokewidth(6)
+    strokewidth(1)
     
-    if len(circles) > 5000:
+    if len(circles) > 3500:
         # hack to make animation stop by causing python to puke on an unknown token
         # which I call stop, for obvious reasons
         stop
@@ -106,7 +106,7 @@ def draw():
         circles.extend(outer_circles)
         potential_coords = []
         for circle in outer_circles:
-            coords = new_coords_for(circle, 6)
+            coords = new_coords_for(circle, 8)
             potential_coords.extend(coords)
 
         new_circles = generate_circles_from_coords(potential_coords)
