@@ -21,7 +21,6 @@ class FOLCircle:
     
     # draw a portion of the circle, starting with the point nearest given x,y coords
     def draw_portion(self, x, y, percent=100):
-        print len(list(self.path_points))
         # point precision is 100 here, makes working with percents easy
         path_points = list(self.path.points(amount=100))
         
@@ -42,6 +41,43 @@ class FOLCircle:
         if len(chunk) > 0:
             subpath = findpath(chunk)
             drawpath(subpath)
+    
+    def draw_portion_from_both_ends(self, x, y, percent=100):
+        mid_index = 50
+        top_index = mid_index + (percent/2)
+        bot_index = mid_index - (percent/2)
+    
+        # point precision is 100 here, makes working with percents easy
+        path_points = list(self.path.points(amount=100))
+        mid_point = point_nearest(x,y,path_points)
+    
+        target = path_points.index(mid_point)
+        rotation_amount = mid_index - target
+        path_points = rotate_list(rotation_amount, path_points)
+
+        if percent > 0:
+            curve1 = path_points[mid_index:top_index]
+            curve2 = path_points[bot_index:mid_index + 1]
+            if len(curve1) > 0:
+                subpath = findpath(curve1)
+                subpath.extend(findpath(curve2))
+                drawpath(subpath)
+            
+def rotate_list(amount,lst):
+    if amount == 0:
+        return lst
+    if amount > 0:
+        above = lst[-amount:-1]
+        rest = lst[0:-amount + 1]
+        below = []
+    else:
+        above = []
+        rest = lst[abs(amount):]
+        below = lst[0:abs(amount)]
+        
+    above.extend(rest)
+    above.extend(below)
+    return above
         
 def point_nearest(x,y, points):
     deltas2points = {}
@@ -144,7 +180,7 @@ def draw():
     # draw new outer row
     for circle in outer_circles:
         stroke(1,1,1)
-        circle.draw_portion(640,360,outer_circle_draw_pct)
+        circle.draw_portion_from_both_ends(640,360,outer_circle_draw_pct)
 
     if outer_circle_draw_pct >= 100:
         # reset drawing progress
